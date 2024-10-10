@@ -1,0 +1,281 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h> // Used for srand((unsigned) time(NULL)) command
+
+float credits = 500;
+int Ptotal = 0, Dtotal = 0;
+int bet = 0;
+
+// Function to generate a random number between 1 and 13
+int generateRandomNumber()
+{
+    static int seeded = 0;
+
+    if (!seeded)
+    {
+        srand((unsigned)time(NULL)); // Seed the random number generator once
+        seeded = 1;                  // Mark as seeded
+    }
+
+    return rand() % 13 + 1; // Return a random number between 1 and 13
+}
+
+int card(int number)
+{
+    if (number == 1)
+        return 11;
+    if (number >= 2 && number <= 10)
+        return number;
+    if (number >= 11)
+        return 10;
+}
+
+void rules()
+{
+    printf("Blackjack Rule\n");
+    printf("Objective: Beat the dealer's hand by getting a total value closest to 21 without exceeding it.\n\n");
+
+    printf("Card Values:\n");
+    printf("Numbered cards (2-10) are worth their face value.\n");
+    printf("Jacks, Queens, and Kings are worth 10 points each.\n");
+    printf("Aces can be worth either 1 or 11 points, depending on which is more beneficial to the player.\n\n");
+
+    printf("Gameplay:\n");
+    printf("Initial Deal: Each player receives two cards face up, and the dealer receives one card face up (the \"upcard\") and one card face down (the \"hole card\").\n");
+    printf("Player's Turn: Based on the value of their hand, players can choose to:\n");
+    printf("Hit: Take an additional card to try to get closer to 21 or beat the dealer's hand.\n");
+    printf("Stand: Keep their current hand and end their turn.\n");
+    printf("Double Down: Double their initial bet and receive one more card, but cannot hit again after that.\n");
+    printf("Split: If the initial two cards have the same value, split them into two separate hands, each with a separate bet. Players can hit or stand on each hand separately.\n\n");
+
+    printf("Dealer's Turn: After all players have finished their turns, the dealer reveals their hole card and follows a set of predetermined rules:\n");
+    printf("If the dealer's upcard is an Ace, they may offer \"insurance\" to players, allowing them to bet half their initial bet that the dealer has a Blackjack (Ace and a 10-value card). If the dealer does have a Blackjack, insurance wins 2:1.\n");
+    printf("If the dealer's hand value is 16 or less, they must draw another card.\n");
+    printf("If the dealer's hand value is 17 or more, they must stand.\n\n");
+
+    printf("Winning and Losing: If a player's hand value is higher than the dealer's hand without exceeding 21, they win even money (1:1) on their bet. If the player's hand value exceeds 21, they \"bust\" and lose their bet. If the dealer's hand value exceeds 21, all remaining players win even money on their bets.\n\n");
+
+    printf("Additional Rules:\n");
+    printf("Blackjack: If a player's initial two cards have a total value of 21 (e.g., an Ace and a 10-value card), they have a Blackjack and win 3:2 (or 6:5 in some casinos) on their bet, unless the dealer also has a Blackjack.\n");
+    printf("Surrender: Some casinos offer surrender, allowing players to give up their hand and lose half their bet. Early surrender, where players can surrender before the dealer checks for a Blackjack, is less common.\n");
+    printf("Side Bets: Some casinos offer additional side bets, such as Perfect Pairs, TriLux, or 21+3, which can have varying payouts and rules. These bets are separate from the main Blackjack game and are not recommended as they have a significant house edge.\n");
+}
+
+void help()
+{
+    printf("*** Commands *** \n");
+    printf("{Amount} : To bet amounts \n");
+    printf("h : To hit the card (to take one more card)\n");
+    printf("s : To stand (to stop taking card)\n");
+}
+
+void player()
+{
+
+    int playerNo = generateRandomNumber();
+    int playerCardNumber = card(playerNo);
+
+    if (playerNo == 1)
+    {
+        Ptotal += playerCardNumber;
+        printf("You got the ACE, Your card Total is %d\n", Ptotal);
+    }
+    else if (playerNo >= 2 && playerNo <= 10)
+    {
+        Ptotal += playerCardNumber;
+        printf("You got a face %d card, Your card Total is %d\n ", playerCardNumber, Ptotal);
+    }
+    else
+    {
+        Ptotal += 10;
+        if (playerNo == 11)
+            printf("You got the Jack, Your card Total is %d\n", Ptotal);
+        if (playerNo == 12)
+            printf("You got the Queen, Your card Total is %d\n", Ptotal);
+        if (playerNo == 13)
+            printf("You got the King, Your card Total is %d\n", Ptotal);
+    }
+}
+
+void dealer()
+{
+    int dealerNo = generateRandomNumber();
+    int dealerCardNumber = card(dealerNo);
+
+    if (dealerNo == 1)
+    {
+        Dtotal += dealerCardNumber;
+        printf("Dealer got the ACE, Dealer card Total is %d\n", Dtotal);
+    }
+    else if (dealerNo >= 2 && dealerNo <= 10)
+    {
+        Dtotal += dealerCardNumber;
+        printf("Dealer got a face %d card, Dealer card Total is %d\n ", dealerCardNumber, Dtotal);
+    }
+    else
+    {
+        Dtotal += 10;
+        if (dealerNo == 11)
+            printf("Dealer got the Jack, Dealer card Total is %d\n", Dtotal);
+        if (dealerNo == 12)
+            printf("Dealer got the Queen, Dealer card Total is %d\n", Dtotal);
+        if (dealerNo == 13)
+            printf("Dealer got the King, Dealer card Total is %d\n", Dtotal);
+    }
+}
+
+void winner()
+{
+    if (Ptotal == 21 && Dtotal != 21)
+    {
+        printf("You Got the 21,\n You won the game!\n");
+        credits += (bet * 1.5);
+    }
+    else if (Ptotal != 21 && Dtotal == 21)
+    {
+        printf("Dealer Got the 21,\n You lost the game!\n");
+        credits -= bet;
+    }
+    else if (Ptotal == 21 && Dtotal == 21)
+    {
+        printf("Both got 21,\n Game draw!\n");
+    }
+    else if (Ptotal > 21)
+    {
+        printf("You got more than 21,\n Dealer won!\n");
+        credits -= bet;
+    }
+    else if (Dtotal > 21)
+    {
+        printf("Dealer got more than 21,\n You won!\n");
+        credits += (bet * 1.5);
+    }
+    else if (Ptotal > Dtotal)
+    {
+        printf("You got %d and Dealer got %d,\n You won!\n", Ptotal, Dtotal);
+        credits += (bet * 1.5);
+    }
+    else
+    {
+        printf("You got %d and Dealer got %d,\n Dealer won!\n", Ptotal, Dtotal);
+        credits -= bet;
+    }
+}
+
+int main()
+{
+    int opt;
+    do
+    {
+        printf("1. Play BlackJack\n");
+        printf("2. Rules\n");
+        printf("3. Help\n");
+        printf("Select: ");
+        scanf("%d", &opt);
+
+        switch (opt)
+        {
+        case 1:
+        {
+            char start, choice2;
+            printf("Ready for this game? (Y/N)\n");
+            scanf(" %c", &start);
+
+            if (start == 'Y')
+            {
+                do
+                {
+                    Ptotal = 0; // Reset totals for each round
+                    Dtotal = 0;
+                    if (credits > 0)
+                    {
+                        printf("You Have $%.2f Credits \n", credits);
+                        printf("Enter Bet Amount : ");
+                        scanf("%d", &bet);
+
+                        if (bet <= credits)
+                        {
+                            player();
+                            dealer();
+
+                            printf("You got the card total of %d and Dealer got the card total of %d\n", Ptotal, Dtotal);
+
+                            char choice;
+                            do
+                            {
+                                printf("If you wanna hit press 'H' or press 'S' to stand\n");
+                                scanf(" %c", &choice);
+
+                                if (choice == 'H')
+                                {
+                                    player();
+
+                                    if (Ptotal > 21 && Dtotal < 21)
+                                    {
+                                        printf("You got more than 21,\n Dealer won!\n");
+                                        credits -= bet;
+                                        printf("Your new credits is $%.2f \n", credits); // Fixed
+
+                                        break;
+                                    }
+                                    dealer();
+                                    // When dealer exceeds 21
+                                    if (Dtotal > 21 && Ptotal < 21)
+                                    {
+                                        printf("Dealer got more than 21,\n You won!\n");
+                                        credits = credits + (bet * 1.5);
+                                        printf("Your new credits is $%.2f \n", credits); // Fixed
+                                        break;
+                                    }
+                                }
+                                else if (choice == 'S')
+                                {
+
+                                    while (Dtotal < 16)
+                                    {
+                                        dealer();
+                                    }
+                                    winner();
+                                    printf("Your new credits is $%.2f \n", credits);
+                                    break;
+                                }
+                                else
+                                {
+                                    printf("Invalid Input\n");
+                                    break;
+                                }
+                            } while (choice == 'H');
+
+                            printf("Wanna play more? (Y/N)\n");
+                            scanf(" %c", &choice2);
+                        }
+                        else
+                        {
+                            printf("You bet higher than your credits \n");
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        printf("U have 0 credits ! game over");
+                        break;
+                    }
+                } while (choice2 == 'Y');
+            }
+            break;
+        }
+        case 2:
+            rules();
+            break;
+        case 3:
+            help();
+            break;
+        default:
+            printf("Invalid Option\n");
+            break;
+        }
+
+    } while (opt == 1 && opt == 2 && opt == 3);
+
+    return 0;
+}
