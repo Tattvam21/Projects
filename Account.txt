@@ -1,0 +1,15 @@
+Rs1000 has been deposited to your account 
+Date /time of transaction Fri Oct 11 15:28:11 2024
+
+Rs10000 has been withdrawed from your account 
+Date /time of transaction Fri Oct 11 15:28:18 2024
+
+Rs500 transfered to 1534173697 account no. successfully 
+Date /time of transaction Fri Oct 11 15:28:26 2024
+
+Rs1000000000 has been deposited to your account 
+Date /time of transaction Fri Oct 11 15:28:39 2024
+
+Rs1000 transfered to -1838126807 account no. successfully 
+Date /time of transaction Fri Oct 11 15:28:45 2024
+
